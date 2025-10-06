@@ -48,17 +48,48 @@ header h1 { color: var(--primary-color); font-weight: 700; font-size: 2em; margi
 .question { width: 100%; text-align: center; animation: fadeIn 0.5s ease-in-out; }
 .question h3 { color: var(--text-color); font-weight: 400; margin-bottom: 25px; font-size: 1.4em; line-height: 1.4; }
 
-.question label { display: block; position: relative; padding: 12px 12px 12px 45px; margin: 0 auto 10px; max-width: 80%; cursor: pointer; border-radius: 8px; border: 1px solid var(--border-color); background-color: transparent; text-align: left; transition: all 0.2s; }
-.question label:hover { background-color: rgba(255, 255, 255, 0.05); border-color: var(--primary-color); }
-.question input[type="radio"] { display: none; }
-.question label span { transition: color 0.2s; }
+/* --- AQUI ESTÃO AS MUDANÇAS --- */
 
-.question label::before { content: ''; position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border: 2px solid var(--text-muted); border-radius: 50%; transition: border-color 0.2s; }
-.question label::after { content: ''; position: absolute; left: 19px; top: 50%; transform: translateY(-50%) scale(0); width: 12px; height: 12px; background-color: var(--primary-color); border-radius: 50%; transition: transform 0.2s ease-out; box-shadow: 0 0 5px var(--primary-color); }
+.question label {
+    display: block;
+    position: relative;
+    padding: 12px 20px; /* Padding simétrico */
+    margin: 0 auto 10px;
+    max-width: 80%;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 2px solid var(--border-color); /* Borda um pouco mais grossa */
+    background-color: transparent;
+    text-align: center; /* Texto centralizado */
+    transition: all 0.2s ease-in-out;
+}
 
-.question label:has(input:checked)::before { border-color: var(--primary-color); }
-.question label:has(input:checked)::after { transform: translateY(-50%) scale(1); }
-.question label:has(input:checked) span { color: var(--primary-color); font-weight: 600; }
+.question label:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--text-muted);
+}
+
+.question input[type="radio"] {
+    display: none; /* Oculta o botão de rádio original */
+}
+
+.question label span {
+    transition: color 0.2s;
+}
+
+/* Novo estilo para a opção selecionada */
+.question label:has(input:checked) {
+    border-color: var(--primary-color);
+    background-color: rgba(0, 255, 153, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 153, 0.3);
+}
+
+.question label:has(input:checked) span {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* --- FIM DAS MUDANÇAS --- */
 
 .nav-buttons { display: flex; justify-content: space-between; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
 .nav-buttons button { padding: 10px 25px; font-size: 1em; font-weight: 600; font-family: 'Poppins', sans-serif; border: 1px solid transparent; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
