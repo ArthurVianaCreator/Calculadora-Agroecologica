@@ -27,7 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         form.innerHTML = '';
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
+            
+            // --- CORREÇÃO APLICADA AQUI ---
+            // A ordenação agora é decrescente (b - a), exibindo as
+            // respostas da que vale 4 pontos até a que vale 1 ponto.
             labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
+            
             labels.forEach(label => q.appendChild(label));
             form.appendChild(q);
         });
@@ -105,13 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
             icon = '☹️'; message = `<strong>Pontuação: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`; resultClass = 'result-improve';
         }
         
-        // --- ALTERAÇÃO 1: Botão removido do HTML ---
         resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
         resultSummary.className = `result-summary ${resultClass}`;
 
         renderResultChart(catScores, maxCatScores);
 
-        // --- ALTERAÇÃO 2: Detalhes exibidos diretamente, sem necessidade de botão ou evento ---
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
             breakdownHTML += `<li><strong>${category}:</strong> ${catScores[category]} / ${maxCatScores[category]} pontos</li>`;
@@ -160,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 plugins: {
                     legend: { 
                         labels: { color: '#f5f5f5' },
-                        // --- ALTERAÇÃO 3: Desativa a função de clique na legenda ---
                         onClick: null
                     }
                 }
