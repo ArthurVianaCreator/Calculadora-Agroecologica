@@ -44,6 +44,15 @@ body {
     animation: fadeInContainer 1s ease-out forwards;
 }
 
+/* --- ALTERAÇÃO AQUI --- */
+/* Adicionado Flexbox para organizar os elementos internos verticalmente */
+.calculator-section {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Faz esta seção ocupar o espaço vertical disponível */
+}
+
+
 header { text-align: center; margin-bottom: 20px; }
 .project-title h2 { color: var(--text-muted); font-weight: 400; font-size: 1em; }
 .project-title h3 { color: var(--text-color); font-weight: 600; font-size: 1.3em; text-transform: uppercase; letter-spacing: 1px; }
@@ -73,7 +82,15 @@ header h1 {
     box-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); 
 }
 
-#eco-form { min-height: 280px; display: flex; position: relative; }
+/* --- ALTERAÇÃO AQUI --- */
+/* A altura mínima garante que o formulário ocupe espaço suficiente */
+/* A propriedade flex-grow garante que ele se expanda, empurrando os botões para baixo */
+#eco-form { 
+    min-height: 280px; 
+    display: flex; 
+    position: relative;
+    flex-grow: 1; 
+}
 .question { 
     width: 100%; 
     text-align: center;
@@ -124,7 +141,14 @@ header h1 {
     font-weight: 600;
 }
 
-.nav-buttons { display: flex; justify-content: space-between; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+/* --- ALTERAÇÃO AQUI --- */
+/* Removido margin-top: auto, pois o Flexbox na classe pai já cuida do posicionamento */
+.nav-buttons { 
+    display: flex; 
+    justify-content: space-between; 
+    padding-top: 20px; 
+    border-top: 1px solid var(--border-color); 
+}
 .nav-buttons button { padding: 12px 30px; font-size: 1em; font-weight: 600; font-family: 'Poppins', sans-serif; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
 
 #prev-btn { background-color: transparent; color: var(--text-muted); border: 2px solid var(--text-muted); }
