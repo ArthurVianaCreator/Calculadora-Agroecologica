@@ -6,11 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate-btn');
     const progressBar = document.getElementById('progress-bar');
     const navButtons = document.querySelector('.nav-buttons');
+    const calculatorSection = document.querySelector('.calculator-section');
     
     let questions;
     let currentQuestionIndex = 0;
 
-    // --- Função para embaralhar um array (Fisher-Yates shuffle) ---
+    // --- Função para embaralhar um array ---
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -21,25 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Prepara e embaralha o quiz ---
     function setupQuiz() {
         questions = Array.from(form.querySelectorAll('.question'));
-
-        // 1. Embaralha as alternativas dentro de cada questão
         questions.forEach(question => {
             const labels = Array.from(question.querySelectorAll('label'));
             shuffleArray(labels);
             labels.forEach(label => question.appendChild(label));
         });
 
-        // 2. Embaralha a ordem das próprias questões
         shuffleArray(questions);
         
-        // 3. Limpa o formulário e anexa apenas a primeira questão
         form.innerHTML = '';
-        questions.forEach(q => form.appendChild(q)); // Mantém todas no DOM para cálculo
+        questions.forEach(q => form.appendChild(q));
         
         showQuestion(0);
     }
 
-    // --- Mostra a questão atual e esconde as outras ---
+    // --- Mostra a questão atual ---
     function showQuestion(index) {
         questions.forEach((question, i) => {
             question.classList.toggle('hidden', i !== index);
@@ -50,8 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Atualiza a barra de progresso ---
     function updateProgressBar() {
+        // Inicia a barra em 10% para a primeira questão
         const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-        progressBar.style.width = `${progress}%`;
+        progressBar.style.width = `${Math.max(10, progress)}%`;
     }
 
     // --- Atualiza a visibilidade dos botões ---
@@ -108,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Mostra o resultado final ---
     function displayResult(score) {
+        // Esconde os elementos do quiz
         form.classList.add('hidden');
         navButtons.classList.add('hidden');
         progressBar.parentElement.classList.add('hidden');
@@ -116,16 +115,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let resultClass = '';
 
         if (score >= 35) {
-            message = `<strong>Parabéns! Sua pontuação é ${score} de 40.</strong><br>Suas escolhas são extremamente sustentáveis. Continue sendo um exemplo!`;
+            message = `<strong>Parabéns! Sua pontuação é ${score} de 40.</strong><p>Suas escolhas são extremamente sustentáveis. Continue sendo um exemplo!</p>`;
             resultClass = 'result-great';
         } else if (score >= 25) {
-            message = `<strong>Muito bem! Sua pontuação é ${score} de 40.</strong><br>Você está no caminho certo para um estilo de vida mais sustentável. Continue assim!`;
+            message = `<strong>Muito bem! Sua pontuação é ${score} de 40.</strong><p>Você está no caminho certo para um estilo de vida mais sustentável. Continue assim!</p>`;
             resultClass = 'result-good';
         } else {
-            message = `<strong>Sua pontuação é ${score} de 40.</strong><br>Existem algumas áreas onde você pode melhorar. Pequenas mudanças podem fazer uma grande diferença para o planeta!`;
+            message = `<strong>Sua pontuação é ${score} de 40.</strong><p>Existem algumas áreas onde você pode melhorar. Pequenas mudanças podem fazer uma grande diferença para o planeta!</p>`;
             resultClass = 'result-improve';
         }
-
+        
         resultDiv.innerHTML = message;
         resultDiv.className = '';
         resultDiv.classList.add(resultClass);

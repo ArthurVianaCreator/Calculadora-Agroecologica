@@ -1,106 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+:root {
+    --bg-color: #1a1a1a;
+    --surface-color: #2c2c2c;
+    --primary-color: #00ff99; /* Verde menta tecnológico */
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --border-color: #444;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f1ea;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
 }
 
 .container {
     width: 100%;
-    max-width: 800px;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    background-color: var(--surface-color);
+    padding: 30px 40px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 header {
     text-align: center;
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
-.group-info {
-    margin-top: 15px;
-    color: #555;
-    font-size: 0.9em;
+header h1 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.group-info, .calculation-info {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.5;
 }
 
 .calculation-info {
-    margin-top: 15px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    font-size: 0.9em;
-    color: #333;
-    text-align: left;
-}
-
-h1, h3 {
-    color: #4b663d;
-}
-
-h1 {
-    margin-bottom: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
 }
 
 /* Barra de Progresso */
 .progress-container {
     width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 5px;
+    background-color: #444;
+    border-radius: 20px;
     margin-bottom: 25px;
-    overflow: hidden;
 }
 
 #progress-bar {
-    height: 15px;
+    height: 10px;
     width: 0%;
-    background-color: #6b8e23;
-    border-radius: 5px;
+    background: linear-gradient(90deg, #00ff99, #00d1b2);
+    border-radius: 20px;
     transition: width 0.4s ease-in-out;
 }
 
-/* Calculadora */
+/* Formulário e Questões */
+#eco-form {
+    min-height: 250px; /* Garante altura consistente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .question {
-    background-color: #fdfdfd;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .question h3 {
-    margin-top: 0;
-    color: #5a8248;
+    color: var(--text-color);
+    font-weight: 400;
+    margin-bottom: 20px;
+    font-size: 1.3em;
 }
 
 .question label {
     display: block;
     margin-bottom: 10px;
     cursor: pointer;
-    padding: 10px 15px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    transition: background-color 0.2s, border-color 0.2s;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #333;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
 }
 
 .question label:hover {
-    background-color: #f0f4ef;
+    background-color: #444;
+    transform: translateY(-2px);
 }
 
-.question label:last-child {
-    margin-bottom: 0;
+/* Estilo do Radio Button Customizado */
+.question input[type="radio"] {
+    display: none; /* Esconde o radio button original */
+}
+
+.question input[type="radio"]:checked + span {
+    color: var(--primary-color);
+}
+
+.question input[type="radio"]:checked ~ label {
+    border-color: var(--primary-color);
+    background-color: rgba(0, 255, 153, 0.1);
 }
 
 /* Botões de Navegação */
@@ -108,68 +130,68 @@ h1 {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
 }
 
 .nav-buttons button {
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 10px 25px;
+    font-size: 1em;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
+    transition: background-color 0.3s, transform 0.1s;
 }
 
 #prev-btn {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
+    background-color: #444;
+    color: var(--text-muted);
 }
 #prev-btn:hover {
-    background-color: #e0e0e0;
+    background-color: #555;
 }
 
 #next-btn, #calculate-btn {
-    background-color: #6b8e23;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(0, 255, 153, 0.2);
 }
 #next-btn:hover, #calculate-btn:hover {
-    background-color: #556b2f;
+    background-color: #fff;
+}
+#next-btn:active, #calculate-btn:active {
+    transform: scale(0.98);
 }
 
-.nav-buttons button:active {
-    transform: translateY(1px);
-}
-
-
-/* Resultado */
+/* Tela de Resultado */
 #result {
-    margin-top: 30px;
-    padding: 20px;
-    border-radius: 8px;
     text-align: center;
-    font-size: 1.2em;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    animation: fadeIn 0.5s;
 }
 
-.result-great {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
+#result strong {
+    font-size: 1.8em;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: block;
 }
 
-.result-good {
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
-    color: #856404;
+.result-great strong { color: #00ff99; }
+.result-good strong { color: #f0de5a; }
+.result-improve strong { color: #ff8c69; }
+
+/* Animações e Classes Utilitárias */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.result-improve {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-/* Classe Utilitária */
 .hidden {
-    display: none;
+    display: none !important;
 }
