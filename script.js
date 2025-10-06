@@ -27,7 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         form.innerHTML = '';
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
-            shuffleArray(labels);
+            // Ordena as alternativas da maior para a menor pontuação (4 para 1)
+            labels.sort((a, b) => {
+                const valA = a.querySelector('input').value;
+                const valB = b.querySelector('input').value;
+                return valB - valA;
+            });
             labels.forEach(label => q.appendChild(label));
             form.appendChild(q);
         });
@@ -106,22 +111,19 @@ document.addEventListener('DOMContentLoaded', () => {
             icon = '☹️'; message = `<strong>Pontuação: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`; resultClass = 'result-improve';
         }
         
-        resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}<button type="button" id="show-details-btn">Ver Detalhes do Cálculo</button>`;
+        resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
         resultSummary.className = `result-summary ${resultClass}`;
 
         renderResultChart(catScores, maxCatScores);
 
-        // Lógica do botão de detalhes
-        document.getElementById('show-details-btn').addEventListener('click', (e) => {
-            let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
-            for (const category in catScores) {
-                breakdownHTML += `<li><strong>${category}:</strong> ${catScores[category]} / ${maxCatScores[category]} pontos</li>`;
-            }
-            breakdownHTML += '</ul>';
-            resultBreakdown.innerHTML = breakdownHTML;
-            resultBreakdown.classList.remove('hidden');
-            e.target.classList.add('hidden'); // Esconde o botão após clicar
-        });
+        // Exibe os detalhes do cálculo diretamente
+        let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
+        for (const category in catScores) {
+            breakdownHTML += `<li><strong>${category}:</strong> ${catScores[category]} / ${maxCatScores[category]} pontos</li>`;
+        }
+        breakdownHTML += '</ul>';
+        resultBreakdown.innerHTML = breakdownHTML;
+        resultBreakdown.classList.remove('hidden');
     }
 
     function renderResultChart(catScores, maxCatScores) {
@@ -161,7 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 plugins: {
-                    legend: { labels: { color: '#f5f5f5' } }
+                    legend: { 
+                        labels: { color: '#f5f5f5' },
+                        // Desabilita a função de clique na legenda para não esconder o dataset
+                        onClick: null
+                    }
                 }
             }
         });
