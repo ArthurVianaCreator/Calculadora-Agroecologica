@@ -27,26 +27,28 @@ document.addEventListener('DOMContentLoaded', () => {
         form.innerHTML = '';
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
-            
-            // --- CORREÇÃO APLICADA AQUI ---
-            // A ordenação agora é decrescente (b - a), exibindo as
-            // respostas da que vale 4 pontos até a que vale 1 ponto.
             labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
-            
             labels.forEach(label => q.appendChild(label));
             form.appendChild(q);
         });
+
+        // Add 'active' class to the first question to make it visible
         showQuestion(0);
     }
 
     function showQuestion(index) {
-        questions.forEach((q, i) => q.classList.toggle('hidden', i !== index));
+        questions.forEach((q, i) => {
+            // Use a class to control visibility and animation
+            q.classList.toggle('active', i === index);
+        });
         updateProgressBar();
         updateNavButtons();
     }
 
     function updateProgressBar() {
-        progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        // Updated to show progress based on the number of answered questions
+        const answeredCount = questions.filter(q => q.querySelector('input:checked')).length;
+        progressBar.style.width = `${(answeredCount / questions.length) * 100}%`;
     }
 
     function updateNavButtons() {
@@ -61,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     nextBtn.addEventListener('click', () => {
-        if (!isCurrentQuestionAnswered()) { alert('Por favor, selecione uma resposta para continuar.'); return; }
+        if (!isCurrentQuestionAnswered()) { 
+            alert('Por favor, selecione uma resposta para continuar.'); 
+            return; 
+        }
+        updateProgressBar(); // Update progress bar on click
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             showQuestion(currentQuestionIndex);
@@ -76,7 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     calculateBtn.addEventListener('click', () => {
-        if (!isCurrentQuestionAnswered()) { alert('Por favor, responda à última pergunta.'); return; }
+        if (!isCurrentQuestionAnswered()) { 
+            alert('Por favor, responda à última pergunta.'); 
+            return; 
+        }
+        updateProgressBar();
         
         const categoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         const maxCategoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
@@ -149,12 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
                 scales: {
                     r: {
-                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                        pointLabels: { color: '#f5f5f5', font: { size: 12 } },
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                        pointLabels: { color: '#f5f5f5', font: { size: 14, family: 'Poppins' } },
                         ticks: { display: false, stepSize: 4 },
                         min: 0,
                         max: 16
@@ -162,8 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 plugins: {
                     legend: { 
-                        labels: { color: '#f5f5f5' },
-                        onClick: null
+                        display: false,
                     }
                 }
             }
