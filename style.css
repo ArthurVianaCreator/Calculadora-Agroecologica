@@ -180,3 +180,72 @@ header h1 {
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .hidden { display: none !important; }
+
+/* --- Responsividade --- */
+
+/* Para tablets e dispositivos menores */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+        align-items: flex-start; /* Alinha o container no topo em telas menores */
+    }
+
+    .container {
+        padding: 25px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .question h3 {
+        font-size: 1.3em;
+    }
+
+    #eco-form {
+        min-height: 300px; /* Aumenta a altura para comportar textos maiores */
+    }
+}
+
+/* Para celulares */
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    header h1 {
+        font-size: 1.6em;
+    }
+
+    .project-title h3 {
+        font-size: 1.1em;
+    }
+
+    .question h3 {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .question label {
+        padding: 12px 15px;
+        max-width: 95%; /* Ocupa mais a largura disponível */
+    }
+
+    .nav-buttons button {
+        padding: 12px 20px;
+        font-size: 0.9em;
+    }
+    
+    .result-main {
+        flex-direction: column; /* Força o conteúdo do resultado a ficar em coluna */
+        gap: 30px;
+    }
+
+    .result-summary strong {
+        font-size: 1.3em;
+    }
+
+    .result-summary p {
+        font-size: 0.9em;
+    }
+}
