@@ -27,12 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         form.innerHTML = '';
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
-            // Ordena as alternativas da maior para a menor pontuação (4 para 1)
-            labels.sort((a, b) => {
-                const valA = a.querySelector('input').value;
-                const valB = b.querySelector('input').value;
-                return valB - valA;
-            });
+            labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
             labels.forEach(label => q.appendChild(label));
             form.appendChild(q);
         });
@@ -87,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = parseInt(q.querySelector('input:checked').value);
             categoryScores[category] += value;
             totalScore += value;
-            // Todas as questões têm pontuação máxima de 4
             maxCategoryScores[category] += 4;
         });
 
@@ -111,12 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
             icon = '☹️'; message = `<strong>Pontuação: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`; resultClass = 'result-improve';
         }
         
+        // --- ALTERAÇÃO 1: Botão removido do HTML ---
         resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
         resultSummary.className = `result-summary ${resultClass}`;
 
         renderResultChart(catScores, maxCatScores);
 
-        // Exibe os detalhes do cálculo diretamente
+        // --- ALTERAÇÃO 2: Detalhes exibidos diretamente, sem necessidade de botão ou evento ---
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
             breakdownHTML += `<li><strong>${category}:</strong> ${catScores[category]} / ${maxCatScores[category]} pontos</li>`;
@@ -159,13 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         pointLabels: { color: '#f5f5f5', font: { size: 12 } },
                         ticks: { display: false, stepSize: 4 },
                         min: 0,
-                        max: 16 // Máximo de pontos por categoria (4 perguntas * 4 pontos)
+                        max: 16
                     }
                 },
                 plugins: {
                     legend: { 
                         labels: { color: '#f5f5f5' },
-                        // Desabilita a função de clique na legenda para não esconder o dataset
+                        // --- ALTERAÇÃO 3: Desativa a função de clique na legenda ---
                         onClick: null
                     }
                 }
