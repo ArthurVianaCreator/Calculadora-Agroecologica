@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Agroecológica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora Agroecológica</h1>
+            <div class="group-info">
+                <p><strong>Grupo:</strong> Arthur Viana, Yuji, Gustavo Dias, Soraya e Matheus Piccose</p>
+            </div>
+            <div class="calculation-info">
+                <p><strong>Como o cálculo é feito:</strong> Cada resposta tem uma pontuação de 1 a 4. Respostas que indicam hábitos mais sustentáveis recebem 4 pontos, enquanto as que indicam hábitos menos sustentáveis recebem 1 ponto. Sua pontuação final é a soma de todas as respostas.</p>
+            </div>
+        </header>
+
+        <section class="calculator-section">
+            <div class="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            
+            <form id="eco-form">
+                <!-- As perguntas serão exibidas aqui uma por vez -->
+                <div class="question" data-question-name="q1">
+                    <h3>De onde vêm seus alimentos?</h3>
+                    <label><input type="radio" name="q1" value="4"> Produzidos localmente</label>
+                    <label><input type="radio" name="q1" value="3"> Comprados em feiras da cidade</label>
+                    <label><input type="radio" name="q1" value="2"> Comprados em supermercado</label>
+                    <label><input type="radio" name="q1" value="1"> Industrializados e importados</label>
+                </div>
+
+                <div class="question" data-question-name="q2">
+                    <h3>Você reutiliza os potes, caixas e etc?</h3>
+                    <label><input type="radio" name="q2" value="4"> Sempre reutilizo e reaproveito tudo que posso</label>
+                    <label><input type="radio" name="q2" value="3"> Reutilizo com frequência</label>
+                    <label><input type="radio" name="q2" value="2"> Às vezes reutilizo</label>
+                    <label><input type="radio" name="q2" value="1"> Nunca reutilizo</label>
+                </div>
+
+                <div class="question" data-question-name="q3">
+                    <h3>Você cultiva alguma planta ou tempero em casa (horta, vaso, jardim)?</h3>
+                    <label><input type="radio" name="q3" value="4"> Sim, tenho uma horta ativa</label>
+                    <label><input type="radio" name="q3" value="3"> Tenho algumas plantas ou temperos</label>
+                    <label><input type="radio" name="q3" value="2"> Já tentei cultivar, mas parei</label>
+                    <label><input type="radio" name="q3" value="1"> Nunca cultivei</label>
+                </div>
+
+                <div class="question" data-question-name="q4">
+                    <h3>Você prefere comprar alimentos orgânicos ou naturais, mesmo que sejam um pouco mais caros?</h3>
+                    <label><input type="radio" name="q4" value="4"> Sempre escolho orgânicos</label>
+                    <label><input type="radio" name="q4" value="3"> Quase sempre</label>
+                    <label><input type="radio" name="q4" value="2"> Às vezes, depende do preço</label>
+                    <label><input type="radio" name="q4" value="1"> Não costumo me importar com isso</label>
+                </div>
+
+                <div class="question" data-question-name="q5">
+                    <h3>Em qual meio de transporte você mais se locomove?</h3>
+                    <label><input type="radio" name="q5" value="4"> A pé</label>
+                    <label><input type="radio" name="q5" value="4"> Bicicleta</label>
+                    <label><input type="radio" name="q5" value="3"> Transporte público</label>
+                    <label><input type="radio" name="q5" value="1"> Carro ou moto particular</label>
+                </div>
+
+                <div class="question" data-question-name="q6">
+                    <h3>Você costuma apagar as luzes e desligar aparelhos quando não está usando?</h3>
+                    <label><input type="radio" name="q6" value="4"> Sempre faço isso</label>
+                    <label><input type="radio" name="q6" value="3"> Na maioria das vezes</label>
+                    <label><input type="radio" name="q6" value="2"> Às vezes esqueço</label>
+                    <label><input type="radio" name="q6" value="1"> Raramente faço isso</label>
+                </div>
+
+                <div class="question" data-question-name="q7">
+                    <h3>Você separa o lixo reciclável do lixo comum em casa?</h3>
+                    <label><input type="radio" name="q7" value="4"> Sempre separo corretamente</label>
+                    <label><input type="radio" name="q7" value="3"> Às vezes separo</label>
+                    <label><input type="radio" name="q7" value="2"> Raramente separo</label>
+                    <label><input type="radio" name="q7" value="1"> Nunca separo</label>
+                </div>
+
+                <div class="question" data-question-name="q8">
+                    <h3>Com que frequência você consome alimentos ultra processados (como salgadinhos, refrigerantes e fast food)?</h3>
+                    <label><input type="radio" name="q8" value="4"> Quase nunca</label>
+                    <label><input type="radio" name="q8" value="3"> Raramente</label>
+                    <label><input type="radio" name="q8" value="2"> Às vezes</label>
+                    <label><input type="radio" name="q8" value="1"> Frequentemente</label>
+                </div>
+
+                <div class="question" data-question-name="q9">
+                    <h3>Você costuma economizar água (ex: fechar a torneira ao escovar os dentes ou reduzir tempo de banho)?</h3>
+                    <label><input type="radio" name="q9" value="4"> Sempre economizo</label>
+                    <label><input type="radio" name="q9" value="3"> Na maioria das vezes</label>
+                    <label><input type="radio" name="q9" value="2"> Às vezes</label>
+                    <label><input type="radio" name="q9" value="1"> Nunca me preocupo com isso</label>
+                </div>
+
+                <div class="question" data-question-name="q10">
+                    <h3>Quando pode, você apoia pequenos produtores ou feiras locais em vez de grandes redes?</h3>
+                    <label><input type="radio" name="q10" value="4"> Sempre apoio e compro localmente</label>
+                    <label><input type="radio" name="q10" value="3"> Frequentemente</label>
+                    <label><input type="radio" name="q10" value="2"> Às vezes</label>
+                    <label><input type="radio" name="q10" value="1"> Não costumo</label>
+                </div>
+            </form>
+            
+            <div class="nav-buttons">
+                <button type="button" id="prev-btn" class="hidden">Anterior</button>
+                <button type="button" id="next-btn">Próximo</button>
+                <button type="button" id="calculate-btn" class="hidden">Calcular Pontuação</button>
+            </div>
+
+            <div id="result" class="hidden"></div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
