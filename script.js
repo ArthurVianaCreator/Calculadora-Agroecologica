@@ -136,15 +136,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderResultChart(catScores, maxCatScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
-        const labels = Object.keys(catScores);
+        
+        // Mapeia os nomes das categorias para quebras de linha, se necessário
+        const labels = Object.keys(catScores).map(label => {
+            const words = label.split(' ');
+            if (words.length > 2) { // Quebra textos com mais de 2 palavras
+                const mid = Math.ceil(words.length / 2);
+                return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+            }
+            return label;
+        });
+    
         const userData = Object.values(catScores);
-
+    
         if(resultChart) resultChart.destroy();
-
+    
         resultChart = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: labels,
+                labels: labels, // Usa os novos labels com quebra de linha
                 datasets: [{
                     label: 'Sua Pontuação',
                     data: userData,
@@ -164,7 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     r: {
                         angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
                         grid: { color: 'rgba(255, 255, 255, 0.2)' },
-                        pointLabels: { color: '#f5f5f5', font: { size: 14, family: 'Poppins' } },
+                        pointLabels: { 
+                            color: '#f5f5f5', 
+                            font: { 
+                                size: 13, // Tamanho da fonte ligeiramente reduzido
+                                family: 'Poppins' 
+                            } 
+                        },
                         ticks: { display: false, stepSize: 4 },
                         min: 0,
                         max: 16
@@ -174,6 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     legend: { 
                         display: false,
                     }
+                },
+                // Adiciona um preenchimento para dar mais espaço aos rótulos
+                layout: {
+                    padding: 10
                 }
             }
         });
