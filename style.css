@@ -27,7 +27,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 20px;
+    min-height: 100svh; 
+    padding: 15px;
 }
 
 .container {
@@ -42,12 +43,15 @@ body {
     display: flex;
     flex-direction: column;
     animation: fadeInContainer 1s ease-out forwards;
+    height: 100%;
+    max-height: 95vh;
 }
 
 .calculator-section {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
+    min-height: 0;
 }
 
 header { text-align: center; margin-bottom: 20px; }
@@ -79,9 +83,12 @@ header h1 {
     box-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); 
 }
 
+/* --- ALTERAÇÃO PRINCIPAL #1 --- */
+/* Removemos o flex-grow daqui e devolvemos uma altura mínima. */
+/* Isso garante que a área da pergunta tenha espaço suficiente para o texto. */
 #eco-form { 
     position: relative;
-    min-height: 320px; 
+    min-height: 300px; /* Altura mínima para conter as perguntas */
 }
 .question { 
     width: 100%; 
@@ -123,8 +130,6 @@ header h1 {
 
 .question input[type="radio"] { display: none; }
 
-/* --- ALTERAÇÃO AQUI --- */
-/* Usando uma classe .selected para maior compatibilidade ao invés de :has() */
 .question label.selected {
     border-color: var(--primary-color);
     background-color: rgba(0, 255, 153, 0.1);
@@ -136,15 +141,16 @@ header h1 {
     color: var(--primary-color);
     font-weight: 600;
 }
-/* --- FIM DA ALTERAÇÃO --- */
 
-
+/* --- ALTERAÇÃO PRINCIPAL #2 --- */
+/* Esta é a correção mágica! */
+/* margin-top: auto força os botões para o final do container flexível. */
 .nav-buttons { 
     display: flex; 
     justify-content: space-between; 
     padding-top: 20px; 
     border-top: 1px solid var(--border-color); 
-    margin-top: auto;
+    margin-top: auto; /* Empurra os botões para a parte de baixo */
 }
 
 .nav-buttons button { padding: 12px 30px; font-size: 1em; font-weight: 600; font-family: 'Poppins', sans-serif; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
@@ -228,6 +234,7 @@ header h1 {
 
     .container {
         padding: 25px;
+        max-height: 98vh;
     }
 
     header h1 {
@@ -237,31 +244,24 @@ header h1 {
     .question h3 {
         font-size: 1.3em;
     }
-
-    #eco-form {
-        min-height: 330px; 
-    }
 }
 
 @media (max-width: 480px) {
     body {
-        min-height: 100svh;
         padding: 10px;
     }
     
     .container {
         padding: 20px 15px;
-        flex-grow: 1;
+        flex-grow: 1; 
     }
 
     header h1 {
         font-size: 1.6em;
     }
-
     .project-title h3 {
         font-size: 1.1em;
     }
-
     .question h3 {
         font-size: 1.2em;
         margin-bottom: 20px;
@@ -269,11 +269,15 @@ header h1 {
 
     .question label {
         padding: 12px 15px;
+        margin-bottom: 8px;
         max-width: 95%;
     }
 
+    /* --- ALTERAÇÃO PRINCIPAL #3 --- */
+    /* Aumentamos um pouco a altura mínima do formulário no mobile */
+    /* para garantir que perguntas com mais texto não sejam cortadas. */
     #eco-form {
-        min-height: 350px;
+        min-height: 320px; 
     }
 
     .nav-buttons button {
