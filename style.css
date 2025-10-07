@@ -44,11 +44,6 @@ body {
     animation: fadeInContainer 1s ease-out forwards;
 }
 
-/* --- CORREÇÃO AQUI --- */
-/*
-  1. A seção principal agora é um contêiner flex que ocupa a altura disponível.
-  Isso é essencial para que o 'margin-top: auto' nos botões funcione.
-*/
 .calculator-section {
     display: flex;
     flex-direction: column;
@@ -84,10 +79,6 @@ header h1 {
     box-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); 
 }
 
-/*
-  2. O formulário precisa de uma altura mínima para garantir que as
-  respostas não fiquem embaixo dos botões.
-*/
 #eco-form { 
     position: relative;
     min-height: 320px; 
@@ -144,10 +135,6 @@ header h1 {
     font-weight: 600;
 }
 
-/* 
-   3. Esta é a mudança principal. 'margin-top: auto' empurra
-   os botões para o final do contêiner flex (.calculator-section).
-*/
 .nav-buttons { 
     display: flex; 
     justify-content: space-between; 
@@ -177,7 +164,15 @@ header h1 {
 #result { animation: fadeInResult 0.5s; }
 .result-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
 .result-summary { flex: 1 1 300px; text-align: center; padding: 10px; }
-.chart-container { flex: 1 1 300px; max-width: 380px; margin: 0 auto; }
+
+/* --- CORREÇÃO APLICADA AQUI --- */
+.chart-container { 
+    flex: 1 1 300px; 
+    max-width: 380px; 
+    margin: 0 auto;
+    /* Força uma altura mínima para o gráfico caber com os textos */
+    min-height: 340px; 
+}
 
 /* Result Animation Classes */
 .result-summary > *, .chart-container, .result-breakdown {
@@ -213,8 +208,6 @@ header h1 {
 .hidden { display: none !important; }
 
 /* --- Responsividade --- */
-
-/* Para tablets e dispositivos menores */
 @media (max-width: 768px) {
     body {
         padding: 15px;
@@ -238,17 +231,14 @@ header h1 {
     }
 }
 
-/* Para celulares */
 @media (max-width: 480px) {
     body {
-        /* Garante que o container possa crescer verticalmente */
-        min-height: 100svh; /* svh é melhor para mobile */
+        min-height: 100svh;
         padding: 10px;
     }
     
     .container {
         padding: 20px 15px;
-        /* Garante que o container ocupe a altura para o flexbox funcionar */
         flex-grow: 1;
     }
 
@@ -271,7 +261,6 @@ header h1 {
     }
 
     #eco-form {
-        /* Aumenta a altura para comportar textos maiores em telas pequenas */
         min-height: 350px;
     }
 

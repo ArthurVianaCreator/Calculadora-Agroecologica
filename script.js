@@ -132,16 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderResultChart(catScores, maxCatScores) {
-        const ctx = document.getElementById('resultChart').getContext('d');
+        // --- ERRO CORRIGIDO AQUI ---
+        // Estava getContext('d'), o correto é getContext('2d')
+        const ctx = document.getElementById('resultChart').getContext('2d');
         
-        // --- CORREÇÃO APLICADA AQUI ---
-        // Mapeia os nomes das categorias para quebrar a linha manualmente
         const labels = Object.keys(catScores).map(label => {
             if (label === 'Consumo e Recursos') {
-                return ['Consumo e', 'Recursos']; // Divide em duas linhas
+                return ['Consumo e', 'Recursos'];
             }
             if (label === 'Estilo de Vida') {
-                return ['Estilo de', 'Vida']; // Divide em duas linhas
+                return ['Estilo de', 'Vida'];
             }
             return label;
         });
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultChart = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: labels, // Usa os novos labels com quebra de linha
+                labels: labels,
                 datasets: [{
                     label: 'Sua Pontuação',
                     data: userData,
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         pointLabels: { 
                             color: '#f5f5f5', 
                             font: { 
-                                size: 12, // Tamanho da fonte ajustado
+                                size: 13, // Tamanho da fonte ajustado
                                 family: 'Poppins' 
                             } 
                         },
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 layout: {
-                    padding: 15 // Aumenta o espaço para os rótulos não cortarem
+                    padding: 5 // Reduzido pois o container agora tem altura mínima
                 }
             }
         });
