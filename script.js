@@ -28,7 +28,20 @@ document.addEventListener('DOMContentLoaded', () => {
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
             labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
-            labels.forEach(label => q.appendChild(label));
+            
+            // --- ALTERAÇÃO AQUI ---
+            // Adiciona um evento de clique para gerenciar a classe 'selected'
+            labels.forEach(label => {
+                label.addEventListener('click', () => {
+                    // Primeiro, remove a classe 'selected' de todas as opções da mesma pergunta
+                    labels.forEach(sibling => sibling.classList.remove('selected'));
+                    // Depois, adiciona a classe 'selected' apenas na opção que foi clicada
+                    label.classList.add('selected');
+                });
+                q.appendChild(label);
+            });
+            // --- FIM DA ALTERAÇÃO ---
+
             form.appendChild(q);
         });
 

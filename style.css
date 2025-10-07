@@ -123,17 +123,21 @@ header h1 {
 
 .question input[type="radio"] { display: none; }
 
-.question label:has(input:checked) {
+/* --- ALTERAÇÃO AQUI --- */
+/* Usando uma classe .selected para maior compatibilidade ao invés de :has() */
+.question label.selected {
     border-color: var(--primary-color);
     background-color: rgba(0, 255, 153, 0.1);
     box-shadow: 0 0 15px rgba(0, 255, 153, 0.3);
     transform: scale(1.02);
 }
 
-.question label:has(input:checked) span {
+.question label.selected span {
     color: var(--primary-color);
     font-weight: 600;
 }
+/* --- FIM DA ALTERAÇÃO --- */
+
 
 .nav-buttons { 
     display: flex; 
@@ -163,13 +167,12 @@ header h1 {
 
 #result { animation: fadeInResult 0.5s; }
 
-/* --- CORREÇÃO DE LAYOUT AQUI --- */
 .result-main {
     display: flex;
-    flex-direction: column; /* Força o gráfico a ficar abaixo do texto */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px; /* Espaçamento entre o texto e o gráfico */
+    gap: 20px;
 }
 
 .result-summary { 
@@ -180,13 +183,12 @@ header h1 {
 
 .chart-container { 
     flex: 1 1 auto;
-    width: 100%; /* Ocupa a largura disponível */
-    max-width: 400px; /* Limita o tamanho máximo */
-    min-height: 320px; /* Garante altura mínima para os textos não cortarem */
+    width: 100%;
+    max-width: 400px;
+    min-height: 320px;
     margin: 0 auto;
 }
 
-/* Result Animation Classes */
 .result-summary > *, .chart-container, .result-breakdown {
     opacity: 0;
     animation: fadeInUp 0.6s ease-out forwards;
@@ -211,7 +213,6 @@ header h1 {
 .result-good strong { color: #f0de5a; text-shadow: 0 0 10px rgba(240, 222, 90, 0.7); }
 .result-improve strong { color: #ff8c69; text-shadow: 0 0 10px rgba(255, 140, 105, 0.7); }
 
-/* Keyframes */
 @keyframes fadeInContainer { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeInResult { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
@@ -219,7 +220,6 @@ header h1 {
 
 .hidden { display: none !important; }
 
-/* --- Responsividade --- */
 @media (max-width: 768px) {
     body {
         padding: 15px;
