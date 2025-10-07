@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Seção de Boas-vindas
+    const welcomeSection = document.getElementById('welcome-section');
+    const startBtn = document.getElementById('start-btn');
+    const nameInput = document.getElementById('user-name');
+    
+    // Seção da Calculadora
+    const calculatorSection = document.getElementById('calculator-section');
     const form = document.getElementById('eco-form');
     const resultDiv = document.getElementById('result');
     const resultSummary = document.querySelector('.result-summary');
@@ -12,6 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let questions;
     let currentQuestionIndex = 0;
     let resultChart = null;
+    let userName = '';
+
+    // Evento para iniciar o quiz
+    startBtn.addEventListener('click', () => {
+        userName = nameInput.value.trim();
+        if (userName === '') {
+            userName = 'Visitante'; // Nome padrão caso o usuário não digite
+        }
+        
+        welcomeSection.classList.add('hidden');
+        calculatorSection.classList.remove('hidden');
+        setupQuiz();
+    });
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -32,13 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
             form.appendChild(q);
         });
 
-        // Add 'active' class to the first question to make it visible
         showQuestion(0);
     }
 
     function showQuestion(index) {
         questions.forEach((q, i) => {
-            // Use a class to control visibility and animation
             q.classList.toggle('active', i === index);
         });
         updateProgressBar();
@@ -46,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateProgressBar() {
-        // Updated to show progress based on the number of answered questions
         const answeredCount = questions.filter(q => q.querySelector('input:checked')).length;
         progressBar.style.width = `${(answeredCount / questions.length) * 100}%`;
     }
@@ -67,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, selecione uma resposta para continuar.'); 
             return; 
         }
-        updateProgressBar(); // Update progress bar on click
+        updateProgressBar();
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             showQuestion(currentQuestionIndex);
@@ -113,17 +130,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxTotalScore = Object.values(maxCatScores).reduce((a, b) => a + b, 0);
 
         if (score >= 35) {
-            icon = '😎'; message = `<strong>Parabéns! Pontuação: ${score}/${maxTotalScore}</strong><p>Seu desempenho é excelente! Você é um exemplo de sustentabilidade.</p>`; resultClass = 'result-great';
+            icon = '😎';
+            message = `<strong>Parabéns, ${userName}! Pontuação: ${score}/${maxTotalScore}</strong><p>Seu desempenho é excelente! Você é um exemplo de sustentabilidade.</p>`;
+            resultClass = 'result-great';
         } else if (score >= 25) {
-            icon = '😊'; message = `<strong>Muito bem! Pontuação: ${score}/${maxTotalScore}</strong><p>Você está no caminho certo. Continue aprimorando seus hábitos!</p>`; resultClass = 'result-good';
+            icon = '😊';
+            message = `<strong>Muito bem, ${userName}! Pontuação: ${score}/${maxTotalScore}</strong><p>Você está no caminho certo. Continue aprimorando seus hábitos!</p>`;
+            resultClass = 'result-good';
         } else {
-            icon = '☹️'; message = `<strong>Pontuação: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`; resultClass = 'result-improve';
+            icon = '☹️';
+            message = `<strong>${userName}, sua pontuação é: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`;
+            resultClass = 'result-improve';
         }
         
         resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
         resultSummary.className = `result-summary ${resultClass}`;
 
-        renderResultChart(catScores, maxCatScores);
+        renderResultChart(catScores);
 
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
@@ -134,9 +157,18 @@ document.addEventListener('DOMContentLoaded', () => {
         resultBreakdown.classList.remove('hidden');
     }
 
-    function renderResultChart(catScores, maxCatScores) {
+    function renderResultChart(catScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
-        const labels = Object.keys(catScores);
+        
+        // CORREÇÃO: Quebra o label "Estilo de Vida" em duas linhas
+        const originalLabels = Object.keys(catScores);
+        const formattedLabels = originalLabels.map(label => {
+            if (label === 'Estilo de Vida') {
+                return ['Estilo', 'de Vida'];
+            }
+            return label;
+        });
+
         const userData = Object.values(catScores);
 
         if(resultChart) resultChart.destroy();
@@ -144,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultChart = new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: labels,
+                labels: formattedLabels, // Usa os labels formatados
                 datasets: [{
                     label: 'Sua Pontuação',
                     data: userData,
@@ -164,7 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     r: {
                         angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
                         grid: { color: 'rgba(255, 255, 255, 0.2)' },
-                        pointLabels: { color: '#f5f5f5', font: { size: 14, family: 'Poppins' } },
+                        pointLabels: { 
+                            color: '#f5f5f5', 
+                            font: { 
+                                size: 13, // Tamanho um pouco menor para garantir
+                                family: 'Poppins' 
+                            } 
+                        },
                         ticks: { display: false, stepSize: 4 },
                         min: 0,
                         max: 16
@@ -178,6 +216,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    setupQuiz();
 });
