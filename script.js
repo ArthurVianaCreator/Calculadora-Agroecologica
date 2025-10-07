@@ -32,13 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
             form.appendChild(q);
         });
 
-        // Add 'active' class to the first question to make it visible
         showQuestion(0);
     }
 
     function showQuestion(index) {
         questions.forEach((q, i) => {
-            // Use a class to control visibility and animation
             q.classList.toggle('active', i === index);
         });
         updateProgressBar();
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateProgressBar() {
-        // Updated to show progress based on the number of answered questions
         const answeredCount = questions.filter(q => q.querySelector('input:checked')).length;
         progressBar.style.width = `${(answeredCount / questions.length) * 100}%`;
     }
@@ -67,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, selecione uma resposta para continuar.'); 
             return; 
         }
-        updateProgressBar(); // Update progress bar on click
+        updateProgressBar();
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             showQuestion(currentQuestionIndex);
@@ -135,14 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderResultChart(catScores, maxCatScores) {
-        const ctx = document.getElementById('resultChart').getContext('2d');
+        const ctx = document.getElementById('resultChart').getContext('d');
         
-        // Mapeia os nomes das categorias para quebras de linha, se necessário
+        // --- CORREÇÃO APLICADA AQUI ---
+        // Mapeia os nomes das categorias para quebrar a linha manualmente
         const labels = Object.keys(catScores).map(label => {
-            const words = label.split(' ');
-            if (words.length > 2) { // Quebra textos com mais de 2 palavras
-                const mid = Math.ceil(words.length / 2);
-                return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+            if (label === 'Consumo e Recursos') {
+                return ['Consumo e', 'Recursos']; // Divide em duas linhas
+            }
+            if (label === 'Estilo de Vida') {
+                return ['Estilo de', 'Vida']; // Divide em duas linhas
             }
             return label;
         });
@@ -177,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         pointLabels: { 
                             color: '#f5f5f5', 
                             font: { 
-                                size: 13, // Tamanho da fonte ligeiramente reduzido
+                                size: 12, // Tamanho da fonte ajustado
                                 family: 'Poppins' 
                             } 
                         },
@@ -191,9 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         display: false,
                     }
                 },
-                // Adiciona um preenchimento para dar mais espaço aos rótulos
                 layout: {
-                    padding: 10
+                    padding: 15 // Aumenta o espaço para os rótulos não cortarem
                 }
             }
         });
