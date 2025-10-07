@@ -26,8 +26,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    /* ALTERAÇÃO: Garante que o body ocupe no mínimo a altura da tela */
     min-height: 100vh;
-    padding: 20px;
+    min-height: 100svh; /* Unidade mais moderna para mobile */
+    padding: 15px;
 }
 
 .container {
@@ -42,12 +44,17 @@ body {
     display: flex;
     flex-direction: column;
     animation: fadeInContainer 1s ease-out forwards;
+    /* ALTERAÇÃO: Faz o container tentar usar a altura disponível */
+    height: 100%;
+    max-height: 95vh; /* Evita que o container fique maior que a tela */
 }
 
+/* ALTERAÇÃO: A seção da calculadora vai crescer para preencher o espaço */
 .calculator-section {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
+    min-height: 0; /* Ajuda a flexbox a gerenciar o tamanho corretamente */
 }
 
 header { text-align: center; margin-bottom: 20px; }
@@ -79,9 +86,10 @@ header h1 {
     box-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); 
 }
 
+/* ALTERAÇÃO: O formulário agora é flexível e não tem mais altura mínima */
 #eco-form { 
     position: relative;
-    min-height: 320px; 
+    flex-grow: 1; /* Faz o formulário ocupar o espaço que sobrar */
 }
 .question { 
     width: 100%; 
@@ -123,8 +131,6 @@ header h1 {
 
 .question input[type="radio"] { display: none; }
 
-/* --- ALTERAÇÃO AQUI --- */
-/* Usando uma classe .selected para maior compatibilidade ao invés de :has() */
 .question label.selected {
     border-color: var(--primary-color);
     background-color: rgba(0, 255, 153, 0.1);
@@ -136,15 +142,13 @@ header h1 {
     color: var(--primary-color);
     font-weight: 600;
 }
-/* --- FIM DA ALTERAÇÃO --- */
-
 
 .nav-buttons { 
     display: flex; 
     justify-content: space-between; 
     padding-top: 20px; 
     border-top: 1px solid var(--border-color); 
-    margin-top: auto;
+    /* ALTERAÇÃO: margin-top: auto foi removido pois a flexbox já posiciona no final */
 }
 
 .nav-buttons button { padding: 12px 30px; font-size: 1em; font-weight: 600; font-family: 'Poppins', sans-serif; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
@@ -220,6 +224,7 @@ header h1 {
 
 .hidden { display: none !important; }
 
+/* --- Responsividade --- */
 @media (max-width: 768px) {
     body {
         padding: 15px;
@@ -228,6 +233,8 @@ header h1 {
 
     .container {
         padding: 25px;
+        /* ALTERAÇÃO: Ajusta a altura máxima para telas menores */
+        max-height: 98vh;
     }
 
     header h1 {
@@ -238,43 +245,41 @@ header h1 {
         font-size: 1.3em;
     }
 
-    #eco-form {
-        min-height: 330px; 
-    }
+    /* ALTERAÇÃO: Remove a altura mínima do formulário */
+    /* #eco-form { min-height: 330px; } */
 }
 
 @media (max-width: 480px) {
     body {
-        min-height: 100svh;
         padding: 10px;
     }
     
     .container {
         padding: 20px 15px;
-        flex-grow: 1;
+        /* ALTERAÇÃO: Garante que o container use o espaço vertical */
+        flex-grow: 1; 
     }
 
     header h1 {
         font-size: 1.6em;
     }
-
     .project-title h3 {
         font-size: 1.1em;
     }
-
     .question h3 {
         font-size: 1.2em;
         margin-bottom: 20px;
     }
 
+    /* ALTERAÇÃO: Diminui o espaçamento das opções para caber mais na tela */
     .question label {
         padding: 12px 15px;
+        margin-bottom: 8px; /* Menor margem */
         max-width: 95%;
     }
 
-    #eco-form {
-        min-height: 350px;
-    }
+    /* ALTERAÇÃO: Remove a altura mínima do formulário */
+    /* #eco-form { min-height: 350px; } */
 
     .nav-buttons button {
         padding: 12px 20px;
