@@ -106,18 +106,35 @@ document.addEventListener('DOMContentLoaded', () => {
         progressBar.parentElement.classList.add('hidden');
         resultDiv.classList.remove('hidden');
 
-        let message = '', resultClass = '', icon = '';
+        let resultClass = '', icon = '', title = '', text = '';
         const maxTotalScore = Object.values(maxCatScores).reduce((a, b) => a + b, 0);
 
         if (score >= 35) {
-            icon = '😎'; message = `<strong>Parabéns! Pontuação: ${score}/${maxTotalScore}</strong><p>Seu desempenho é excelente! Você é um exemplo de sustentabilidade.</p>`; resultClass = 'result-great';
+            icon = '\u{1F60E}';
+            title = 'Parabéns!';
+            text = 'Seu desempenho é excelente! Você é um exemplo de sustentabilidade.';
+            resultClass = 'result-great';
         } else if (score >= 25) {
-            icon = '😊'; message = `<strong>Muito bem! Pontuação: ${score}/${maxTotalScore}</strong><p>Você está no caminho certo. Continue aprimorando seus hábitos!</p>`; resultClass = 'result-good';
+            icon = '\u{1F60A}';
+            title = 'Muito bem!';
+            text = 'Você está no caminho certo. Continue aprimorando seus hábitos!';
+            resultClass = 'result-good';
         } else {
-            icon = '☹️'; message = `<strong>Pontuação: ${score}/${maxTotalScore}</strong><p>Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!</p>`; resultClass = 'result-improve';
+            icon = '\u{1F615}';
+            title = 'Continue tentando!';
+            text = 'Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!';
+            resultClass = 'result-improve';
         }
         
-        resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
+        resultSummary.innerHTML = `
+            <div class="result-icon">${icon}</div>
+            <h3 class="result-title">${title}</h3>
+            <div class="result-score">
+                <span>Sua pontuação final</span>
+                <strong class="score-value">${score} / ${maxTotalScore}</strong>
+            </div>
+            <p class="result-text">${text}</p>
+        `;
         resultSummary.className = `result-summary ${resultClass}`;
 
         renderResultChart(catScores, maxCatScores);
@@ -132,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderResultChart(catScores, maxCatScores) {
-        // --- ERRO CORRIGIDO AQUI ---
-        // Estava getContext('d'), o correto é getContext('2d')
         const ctx = document.getElementById('resultChart').getContext('2d');
         
         const labels = Object.keys(catScores).map(label => {
@@ -176,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         pointLabels: { 
                             color: '#f5f5f5', 
                             font: { 
-                                size: 13, // Tamanho da fonte ajustado
+                                size: 13,
                                 family: 'Poppins' 
                             } 
                         },
@@ -191,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 },
                 layout: {
-                    padding: 5 // Reduzido pois o container agora tem altura mínima
+                    padding: 5
                 }
             }
         });

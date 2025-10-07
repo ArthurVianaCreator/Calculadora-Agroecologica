@@ -165,41 +165,87 @@ header h1 {
 .result-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
 .result-summary { flex: 1 1 300px; text-align: center; padding: 10px; }
 
-/* --- CORREÇÃO APLICADA AQUI --- */
 .chart-container { 
     flex: 1 1 300px; 
     max-width: 380px; 
     margin: 0 auto;
-    /* Força uma altura mínima para o gráfico caber com os textos */
     min-height: 340px; 
 }
 
-/* Result Animation Classes */
 .result-summary > *, .chart-container, .result-breakdown {
     opacity: 0;
     animation: fadeInUp 0.6s ease-out forwards;
 }
+
 .result-summary .result-icon { animation-delay: 0.2s; }
-.result-summary strong { animation-delay: 0.4s; }
-.result-summary p { animation-delay: 0.6s; }
-.chart-container { animation-delay: 0.8s; }
-.result-breakdown { animation-delay: 1.0s; }
+.result-summary .result-title { animation-delay: 0.4s; }
+.result-summary .result-score { animation-delay: 0.6s; }
+.result-summary .result-text { animation-delay: 0.8s; }
+.chart-container { animation-delay: 1.0s; }
+.result-breakdown { animation-delay: 1.2s; }
 
 
 .result-icon { font-size: 4em; margin-bottom: 10px; transform: scale(0); animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; animation-delay: 0.2s; }
-.result-summary strong { font-size: 1.5em; font-weight: 700; margin-bottom: 10px; display: block; }
-.result-summary p { font-size: 1em; font-weight: 300; color: var(--text-muted); max-width: 90%; margin: 0 auto; }
+
+.result-summary .result-title {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.result-summary .result-score {
+    margin: 15px auto 20px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background-color: rgba(0,0,0,0.2);
+    max-width: 90%;
+}
+
+.result-summary .result-score span {
+    display: block;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.result-summary .result-score .score-value {
+    font-size: 2.5em;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+}
+
+.result-summary .result-text {
+    font-size: 1em;
+    font-weight: 300;
+    color: var(--text-muted);
+    max-width: 90%;
+    margin: 0 auto;
+}
 
 .result-breakdown { width: 100%; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; }
 .result-breakdown h4 { font-weight: 600; font-size: 1.2em; color: var(--text-color); margin-bottom: 15px; }
 .result-breakdown ul { list-style: none; padding: 0; max-width: 320px; margin: 0 auto; text-align: left;}
 .result-breakdown li { font-size: 1em; color: var(--text-muted); margin-bottom: 8px; }
 
-.result-great strong { color: #00ff99; text-shadow: 0 0 10px var(--glow-color); }
-.result-good strong { color: #f0de5a; text-shadow: 0 0 10px rgba(240, 222, 90, 0.7); }
-.result-improve strong { color: #ff8c69; text-shadow: 0 0 10px rgba(255, 140, 105, 0.7); }
+.result-great .result-title, .result-great .score-value {
+    color: #00ff99;
+    text-shadow: 0 0 10px var(--glow-color);
+}
 
-/* Keyframes */
+.result-good .result-title, .result-good .score-value {
+    color: #f0de5a;
+    text-shadow: 0 0 10px rgba(240, 222, 90, 0.7);
+}
+
+.result-improve .result-title, .result-improve .score-value {
+    color: #ff8c69;
+    text-shadow: 0 0 10px rgba(255, 140, 105, 0.7);
+}
+
 @keyframes fadeInContainer { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 @keyframes fadeInResult { from { opacity: 0; } to { opacity: 1; } }
 @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
@@ -207,7 +253,6 @@ header h1 {
 
 .hidden { display: none !important; }
 
-/* --- Responsividade --- */
 @media (max-width: 768px) {
     body {
         padding: 15px;
@@ -274,11 +319,15 @@ header h1 {
         gap: 30px;
     }
 
-    .result-summary strong {
-        font-size: 1.3em;
+    .result-summary .result-title {
+        font-size: 1.5em;
+    }
+    
+    .result-summary .result-score .score-value {
+        font-size: 2.2em;
     }
 
-    .result-summary p {
+    .result-summary .result-text {
         font-size: 0.9em;
     }
 }

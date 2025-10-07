@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Agroecológica - Amostra Cultural</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,7 +31,6 @@
             </div>
             
             <form id="eco-form">
-                <!-- As perguntas são inseridas aqui via JS -->
                  <div class="question" data-question-name="q1" data-category="Alimentação">
                     <h3>🛒 De onde vêm seus alimentos?</h3>
                     <label><input type="radio" name="q1" value="4"><span>Produzidos localmente</span></label>
@@ -108,14 +105,12 @@
             <div id="result" class="hidden">
                 <div class="result-main">
                     <div class="result-summary">
-                        <!-- O texto do resultado entra aqui -->
                     </div>
                     <div class="chart-container">
                         <canvas id="resultChart"></canvas>
                     </div>
                 </div>
                 <div class="result-breakdown hidden">
-                    <!-- Detalhes do cálculo entram aqui -->
                 </div>
             </div>
 
@@ -126,9 +121,7 @@
             </div>
         </main>
     </div>
-    <!-- Chart.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom Script -->
     <script src="script.js"></script>
 </body>
 </html>
