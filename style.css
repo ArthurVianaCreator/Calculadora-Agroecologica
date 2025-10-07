@@ -162,16 +162,28 @@ header h1 {
 }
 
 #result { animation: fadeInResult 0.5s; }
-.result-main { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
-.result-summary { flex: 1 1 300px; text-align: center; padding: 10px; }
 
-/* --- CORREÇÃO APLICADA AQUI --- */
+/* --- CORREÇÃO DE LAYOUT AQUI --- */
+.result-main {
+    display: flex;
+    flex-direction: column; /* Força o gráfico a ficar abaixo do texto */
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Espaçamento entre o texto e o gráfico */
+}
+
+.result-summary { 
+    flex: 1 1 auto; 
+    text-align: center; 
+    padding: 10px; 
+}
+
 .chart-container { 
-    flex: 1 1 300px; 
-    max-width: 380px; 
+    flex: 1 1 auto;
+    width: 100%; /* Ocupa a largura disponível */
+    max-width: 400px; /* Limita o tamanho máximo */
+    min-height: 320px; /* Garante altura mínima para os textos não cortarem */
     margin: 0 auto;
-    /* Força uma altura mínima para o gráfico caber com os textos */
-    min-height: 340px; 
 }
 
 /* Result Animation Classes */
@@ -269,11 +281,6 @@ header h1 {
         font-size: 0.9em;
     }
     
-    .result-main {
-        flex-direction: column;
-        gap: 30px;
-    }
-
     .result-summary strong {
         font-size: 1.3em;
     }
