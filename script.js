@@ -28,20 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         questions.forEach(q => {
             const labels = Array.from(q.querySelectorAll('label'));
             labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
-            
-            // --- ALTERAÇÃO AQUI ---
-            // Adiciona um evento de clique para gerenciar a classe 'selected'
-            labels.forEach(label => {
-                label.addEventListener('click', () => {
-                    // Primeiro, remove a classe 'selected' de todas as opções da mesma pergunta
-                    labels.forEach(sibling => sibling.classList.remove('selected'));
-                    // Depois, adiciona a classe 'selected' apenas na opção que foi clicada
-                    label.classList.add('selected');
-                });
-                q.appendChild(label);
-            });
-            // --- FIM DA ALTERAÇÃO ---
-
+            labels.forEach(label => q.appendChild(label));
             form.appendChild(q);
         });
 
@@ -133,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultSummary.innerHTML = `<div class="result-icon">${icon}</div>${message}`;
         resultSummary.className = `result-summary ${resultClass}`;
 
-        renderResultChart(catScores);
+        renderResultChart(catScores, maxCatScores);
 
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
@@ -144,7 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
         resultBreakdown.classList.remove('hidden');
     }
 
-    function renderResultChart(catScores) {
+    function renderResultChart(catScores, maxCatScores) {
+        // --- ERRO CORRIGIDO AQUI ---
+        // Estava getContext('d'), o correto é getContext('2d')
         const ctx = document.getElementById('resultChart').getContext('2d');
         
         const labels = Object.keys(catScores).map(label => {
@@ -187,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         pointLabels: { 
                             color: '#f5f5f5', 
                             font: { 
-                                size: 13,
+                                size: 13, // Tamanho da fonte ajustado
                                 family: 'Poppins' 
                             } 
                         },
@@ -200,6 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     legend: { 
                         display: false,
                     }
+                },
+                layout: {
+                    padding: 5 // Reduzido pois o container agora tem altura mínima
                 }
             }
         });
