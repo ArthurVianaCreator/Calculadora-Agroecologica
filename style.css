@@ -33,7 +33,6 @@ body {
 .container {
     width: 100%;
     max-width: 800px;
-    min-height: 600px; /* Altura mínima para evitar que o layout quebre */
     background-color: var(--surface-color);
     backdrop-filter: blur(20px);
     padding: 30px 40px;
@@ -45,14 +44,18 @@ body {
     animation: fadeInContainer 1s ease-out forwards;
 }
 
-/* Seção da Calculadora (main) */
-#calculator-section {
+/* --- CORREÇÃO AQUI --- */
+/*
+  1. A seção principal agora é um contêiner flex que ocupa a altura disponível.
+  Isso é essencial para que o 'margin-top: auto' nos botões funcione.
+*/
+.calculator-section {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
 }
 
-header { text-align: center; margin-bottom: 10px; }
+header { text-align: center; margin-bottom: 20px; }
 .project-title h2 { color: var(--text-muted); font-weight: 400; font-size: 1em; }
 .project-title h3 { color: var(--text-color); font-weight: 600; font-size: 1.3em; text-transform: uppercase; letter-spacing: 1px; }
 header h1 { 
@@ -63,65 +66,8 @@ header h1 {
     text-shadow: 0 0 15px var(--glow-color);
 }
 .calculation-info { font-size: 0.9em; color: var(--text-muted); margin: 15px 0; padding: 10px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-.group-info { font-size: 0.8em; color: var(--text-muted); font-weight: 300; margin-top: 20px; }
+.group-info { font-size: 0.8em; color: var(--text-muted); font-weight: 300; }
 
-
-/* Estilos da tela de boas-vindas */
-#welcome-section {
-    text-align: center;
-    padding: 20px 0;
-}
-.name-input-group {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-.name-input-group label {
-    font-size: 1.1em;
-    color: var(--text-color);
-}
-.name-input-group input {
-    font-family: 'Poppins', sans-serif;
-    width: 100%;
-    max-width: 350px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 2px solid var(--border-color);
-    background-color: rgba(0,0,0,0.2);
-    color: var(--text-color);
-    font-size: 1em;
-    text-align: center;
-    transition: all 0.3s;
-}
-.name-input-group input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 10px var(--glow-color);
-}
-#start-btn {
-    padding: 12px 30px; 
-    font-size: 1em; 
-    font-weight: 600; 
-    font-family: 'Poppins', sans-serif; 
-    border: none; 
-    border-radius: 10px; 
-    cursor: pointer; 
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    background: linear-gradient(45deg, #00ff99, #00b36b);
-    color: #1a1a1a; 
-    box-shadow: 0 0 20px var(--glow-color);
-    width: 100%;
-    max-width: 350px;
-}
-#start-btn:hover {
-    transform: translateY(-3px) scale(1.05); 
-    box-shadow: 0 7px 30px var(--glow-color);
-}
-
-
-/* --- Quiz --- */
 .progress-container { 
     width: 100%; 
     background-color: rgba(0, 0, 0, 0.3); 
@@ -138,6 +84,10 @@ header h1 {
     box-shadow: 0 0 10px var(--glow-color), 0 0 20px var(--glow-color); 
 }
 
+/*
+  2. O formulário precisa de uma altura mínima para garantir que as
+  respostas não fiquem embaixo dos botões.
+*/
 #eco-form { 
     position: relative;
     min-height: 320px; 
@@ -194,6 +144,10 @@ header h1 {
     font-weight: 600;
 }
 
+/* 
+   3. Esta é a mudança principal. 'margin-top: auto' empurra
+   os botões para o final do contêiner flex (.calculator-section).
+*/
 .nav-buttons { 
     display: flex; 
     justify-content: space-between; 
@@ -259,24 +213,83 @@ header h1 {
 .hidden { display: none !important; }
 
 /* --- Responsividade --- */
+
+/* Para tablets e dispositivos menores */
 @media (max-width: 768px) {
-    body { padding: 15px; align-items: flex-start; }
-    .container { padding: 25px; min-height: 0; }
-    header h1 { font-size: 1.8em; }
-    .question h3 { font-size: 1.3em; }
-    #eco-form { min-height: 330px; }
+    body {
+        padding: 15px;
+        align-items: flex-start;
+    }
+
+    .container {
+        padding: 25px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+    }
+
+    .question h3 {
+        font-size: 1.3em;
+    }
+
+    #eco-form {
+        min-height: 330px; 
+    }
 }
 
+/* Para celulares */
 @media (max-width: 480px) {
-    body { min-height: 100svh; padding: 10px; }
-    .container { padding: 20px 15px; flex-grow: 1; }
-    header h1 { font-size: 1.6em; }
-    .project-title h3 { font-size: 1.1em; }
-    .question h3 { font-size: 1.2em; margin-bottom: 20px; }
-    .question label { padding: 12px 15px; max-width: 95%; }
-    #eco-form { min-height: 350px; }
-    .nav-buttons button { padding: 12px 20px; font-size: 0.9em; }
-    .result-main { flex-direction: column; gap: 30px; }
-    .result-summary strong { font-size: 1.3em; }
-    .result-summary p { font-size: 0.9em; }
+    body {
+        /* Garante que o container possa crescer verticalmente */
+        min-height: 100svh; /* svh é melhor para mobile */
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 20px 15px;
+        /* Garante que o container ocupe a altura para o flexbox funcionar */
+        flex-grow: 1;
+    }
+
+    header h1 {
+        font-size: 1.6em;
+    }
+
+    .project-title h3 {
+        font-size: 1.1em;
+    }
+
+    .question h3 {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .question label {
+        padding: 12px 15px;
+        max-width: 95%;
+    }
+
+    #eco-form {
+        /* Aumenta a altura para comportar textos maiores em telas pequenas */
+        min-height: 350px;
+    }
+
+    .nav-buttons button {
+        padding: 12px 20px;
+        font-size: 0.9em;
+    }
+    
+    .result-main {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .result-summary strong {
+        font-size: 1.3em;
+    }
+
+    .result-summary p {
+        font-size: 0.9em;
+    }
 }
