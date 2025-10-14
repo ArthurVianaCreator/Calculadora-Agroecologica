@@ -44,8 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateProgressBar() {
-        const answeredCount = questions.filter(q => q.querySelector('input:checked')).length;
-        progressBar.style.width = `${(answeredCount / questions.length) * 100}%`;
+        const progress = currentQuestionIndex / (questions.length - 1);
+        progressBar.style.width = `${progress * 100}%`;
     }
 
     function updateNavButtons() {
@@ -64,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, selecione uma resposta para continuar.'); 
             return; 
         }
-        updateProgressBar();
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             showQuestion(currentQuestionIndex);
@@ -83,7 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Por favor, responda à última pergunta.'); 
             return; 
         }
-        updateProgressBar();
+        
+        progressBar.style.width = '100%';
         
         const categoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         const maxCategoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
@@ -94,11 +94,52 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = parseInt(q.querySelector('input:checked').value);
             categoryScores[category] += value;
             totalScore += value;
-            maxCategoryScores[category] += 4;
+            maxCategoryScores[category] += 5;
         });
 
         displayResult(totalScore, categoryScores, maxCategoryScores);
     });
+
+    function getCategoryFeedback(category, score, maxScore) {
+        const percentage = (score / maxScore) * 100;
+        
+        const feedback = {
+            'Alimentação': {
+                high: 'Excelente! Suas escolhas alimentares são conscientes e apoiam um ciclo sustentável.',
+                mid: 'Bom caminho! Que tal visitar uma feira local para descobrir novos sabores e apoiar pequenos produtores?',
+                low: 'Pequenas trocas, como preferir alimentos da estação, podem ter um grande impacto na sua saúde e no ambiente.'
+            },
+            'Consumo e Recursos': {
+                high: 'Parabéns! Você demonstra um ótimo domínio sobre o uso consciente dos recursos naturais.',
+                mid: 'Você está atento! Lembre-se que reduzir o consumo é tão importante quanto reutilizar e reciclar.',
+                low: 'Comece com pequenas ações, como apagar as luzes. Cada gesto consciente ajuda a preservar nossos recursos.'
+            },
+            'Estilo de Vida': {
+                high: 'Seu estilo de vida é um exemplo de harmonia com o meio ambiente. Continue assim!',
+                mid: 'Suas práticas são positivas. Considere incorporar mais um hábito sustentável na sua rotina, como a compostagem.',
+                low: 'Que tal começar um novo hábito? Separar o lixo reciclável é um ótimo primeiro passo para um grande impacto.'
+            }
+        };
+
+        if (percentage >= 80) return feedback[category].high;
+        if (percentage >= 40) return feedback[category].mid;
+        return feedback[category].low;
+    }
+
+    // NOVA FUNÇÃO PARA ANIMAR A CONTAGEM DOS PONTOS
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start);
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
 
     function displayResult(score, catScores, maxCatScores) {
         form.classList.add('hidden');
@@ -109,21 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let resultClass = '', icon = '', title = '', text = '';
         const maxTotalScore = Object.values(maxCatScores).reduce((a, b) => a + b, 0);
 
-        if (score >= 35) {
-            icon = '\u{1F60E}';
-            title = 'Parabéns!';
-            text = 'Seu desempenho é excelente! Você é um exemplo de sustentabilidade.';
-            resultClass = 'result-great';
-        } else if (score >= 25) {
-            icon = '\u{1F60A}';
-            title = 'Muito bem!';
-            text = 'Você está no caminho certo. Continue aprimorando seus hábitos!';
-            resultClass = 'result-good';
+        if (score >= 44) {
+            icon = '🌎'; title = 'Guardião da Terra!'; text = 'Seu desempenho é excelente! Você é um verdadeiro exemplo de consciência agroecológica e sustentabilidade. Parabéns!'; resultClass = 'result-great';
+        } else if (score >= 32) {
+            icon = '🌱'; title = 'Semente do Bem!'; text = 'Você está no caminho certo! Suas ações já causam um impacto positivo. Continue aprimorando seus hábitos!'; resultClass = 'result-good';
         } else {
-            icon = '\u{1F615}';
-            title = 'Continue tentando!';
-            text = 'Existem áreas para melhorar. Pequenas mudanças fazem grande diferença!';
-            resultClass = 'result-improve';
+            icon = '🤔'; title = 'Ponto de Partida!'; text = 'Existem boas oportunidades para melhorar. Pequenas mudanças nos seus hábitos diários podem fazer uma grande diferença!'; resultClass = 'result-improve';
         }
         
         resultSummary.innerHTML = `
@@ -131,83 +163,58 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="result-title">${title}</h3>
             <div class="result-score">
                 <span>Sua pontuação final</span>
-                <strong class="score-value">${score} / ${maxTotalScore}</strong>
+                <strong class="score-value">0</strong> / ${maxTotalScore}
             </div>
             <p class="result-text">${text}</p>
         `;
         resultSummary.className = `result-summary ${resultClass}`;
 
+        // CHAMA A ANIMAÇÃO DA PONTUAÇÃO
+        const scoreValueElement = resultSummary.querySelector('.score-value');
+        animateValue(scoreValueElement, 0, score, 1500); // Anima de 0 a 'score' em 1.5 segundos
+
         renderResultChart(catScores, maxCatScores);
 
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
-            breakdownHTML += `<li><strong>${category}:</strong> ${catScores[category]} / ${maxCatScores[category]} pontos</li>`;
+            const catScore = catScores[category];
+            const maxScore = maxCatScores[category];
+            const feedbackText = getCategoryFeedback(category, catScore, maxScore);
+            breakdownHTML += `<li>
+                <strong>${category}:</strong> ${catScore} / ${maxScore} pontos
+                <span>${feedbackText}</span>
+            </li>`;
         }
         breakdownHTML += '</ul>';
         resultBreakdown.innerHTML = breakdownHTML;
         resultBreakdown.classList.remove('hidden');
     }
 
-    function renderResultChart(catScores, maxCatScores) {
+    function renderResultChart(catScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
-        
-        const labels = Object.keys(catScores).map(label => {
-            if (label === 'Consumo e Recursos') {
-                return ['Consumo e', 'Recursos'];
-            }
-            if (label === 'Estilo de Vida') {
-                return ['Estilo de', 'Vida'];
-            }
-            return label;
-        });
-    
+        const labels = Object.keys(catScores).map(label => label === 'Consumo e Recursos' ? ['Consumo e', 'Recursos'] : label);
         const userData = Object.values(catScores);
-    
         if(resultChart) resultChart.destroy();
-    
         resultChart = new Chart(ctx, {
             type: 'radar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sua Pontuação',
-                    data: userData,
-                    backgroundColor: 'rgba(0, 255, 153, 0.2)',
-                    borderColor: 'rgba(0, 255, 153, 1)',
-                    pointBackgroundColor: 'rgba(0, 255, 153, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(0, 255, 153, 1)',
-                    borderWidth: 2
-                }]
-            },
+            data: { labels: labels, datasets: [{
+                label: 'Sua Pontuação', data: userData,
+                backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)',
+                pointBackgroundColor: 'rgba(0, 255, 153, 1)', pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgba(0, 255, 153, 1)',
+                borderWidth: 2
+            }] },
             options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.2)' },
-                        pointLabels: { 
-                            color: '#f5f5f5', 
-                            font: { 
-                                size: 13,
-                                family: 'Poppins' 
-                            } 
-                        },
-                        ticks: { display: false, stepSize: 4 },
-                        min: 0,
-                        max: 16
-                    }
-                },
-                plugins: {
-                    legend: { 
-                        display: false,
-                    }
-                },
-                layout: {
-                    padding: 5
-                }
+                responsive: true, maintainAspectRatio: false,
+                scales: { r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                    pointLabels: { color: '#f5f5f5', font: { size: 13, family: 'Poppins' } },
+                    ticks: { display: false, stepSize: 5 },
+                    min: 0, max: 20
+                }},
+                plugins: { legend: { display: false } },
+                layout: { padding: 5 }
             }
         });
     }
