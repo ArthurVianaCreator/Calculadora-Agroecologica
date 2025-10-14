@@ -21,24 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupQuiz() {
-        questions = Array.from(form.querySelectorAll('.question'));
+        // MUDANÇA: Em vez de mover os elementos, vamos clonar para a ordem aleatória
+        const originalQuestions = Array.from(form.querySelectorAll('.question'));
+        questions = [...originalQuestions]; // Cria uma cópia para embaralhar
         shuffleArray(questions);
         
-        form.innerHTML = '';
-        questions.forEach(q => {
-            const labels = Array.from(q.querySelectorAll('label'));
-            labels.sort((a, b) => b.querySelector('input').value - a.querySelector('input').value);
-            labels.forEach(label => q.appendChild(label));
-            form.appendChild(q);
-        });
-
+        // Exibe a primeira pergunta sem alterar a ordem no DOM
         showQuestion(0);
     }
 
     function showQuestion(index) {
-        questions.forEach((q, i) => {
-            q.classList.toggle('active', i === index);
-        });
+        const allQuestions = Array.from(form.querySelectorAll('.question'));
+        
+        // Esconde todas as perguntas
+        allQuestions.forEach(q => q.classList.remove('active'));
+        
+        // Mostra a pergunta correta da lista embaralhada
+        if (questions[index]) {
+            questions[index].classList.add('active');
+        }
+
         updateProgressBar();
         updateNavButtons();
     }
@@ -89,12 +91,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxCategoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         let totalScore = 0;
 
-        questions.forEach(q => {
-            const category = q.dataset.category;
-            const value = parseInt(q.querySelector('input:checked').value);
-            categoryScores[category] += value;
-            totalScore += value;
-            maxCategoryScores[category] += 5;
+        // Itera sobre a lista de perguntas original para garantir que todas sejam contadas
+        Array.from(form.querySelectorAll('.question')).forEach(q => {
+            const radioChecked = q.querySelector('input:checked');
+            if (radioChecked) { // Apenas calcula se a pergunta foi respondida
+                const category = q.dataset.category;
+                const value = parseInt(radioChecked.value);
+                categoryScores[category] += value;
+                totalScore += value;
+            }
+            maxCategoryScores[q.dataset.category] += 5;
         });
 
         displayResult(totalScore, categoryScores, maxCategoryScores);
@@ -102,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getCategoryFeedback(category, score, maxScore) {
         const percentage = (score / maxScore) * 100;
-        
         const feedback = {
             'Alimentação': {
                 high: 'Excelente! Suas escolhas alimentares são conscientes e apoiam um ciclo sustentável.',
@@ -120,13 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 low: 'Que tal começar um novo hábito? Separar o lixo reciclável é um ótimo primeiro passo para um grande impacto.'
             }
         };
-
         if (percentage >= 80) return feedback[category].high;
         if (percentage >= 40) return feedback[category].mid;
         return feedback[category].low;
     }
 
-    // NOVA FUNÇÃO PARA ANIMAR A CONTAGEM DOS PONTOS
     function animateValue(obj, start, end, duration) {
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -140,23 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(step);
     }
 
-
     function displayResult(score, catScores, maxCatScores) {
-        form.classList.add('hidden');
-        navButtons.classList.add('hidden');
+        form.style.display = 'none'; // Esconde o form em vez de usar a classe .hidden
+        navButtons.style.display = 'none';
         progressBar.parentElement.classList.add('hidden');
         resultDiv.classList.remove('hidden');
 
         let resultClass = '', icon = '', title = '', text = '';
         const maxTotalScore = Object.values(maxCatScores).reduce((a, b) => a + b, 0);
 
-        if (score >= 44) {
-            icon = '🌎'; title = 'Guardião da Terra!'; text = 'Seu desempenho é excelente! Você é um verdadeiro exemplo de consciência agroecológica e sustentabilidade. Parabéns!'; resultClass = 'result-great';
-        } else if (score >= 32) {
-            icon = '🌱'; title = 'Semente do Bem!'; text = 'Você está no caminho certo! Suas ações já causam um impacto positivo. Continue aprimorando seus hábitos!'; resultClass = 'result-good';
-        } else {
-            icon = '🤔'; title = 'Ponto de Partida!'; text = 'Existem boas oportunidades para melhorar. Pequenas mudanças nos seus hábitos diários podem fazer uma grande diferença!'; resultClass = 'result-improve';
-        }
+        if (score >= 44) { icon = '🌎'; title = 'Guardião da Terra!'; text = 'Seu desempenho é excelente!'; resultClass = 'result-great';
+        } else if (score >= 32) { icon = '🌱'; title = 'Semente do Bem!'; text = 'Você está no caminho certo! Continue aprimorando seus hábitos!'; resultClass = 'result-good';
+        } else { icon = '🤔'; title = 'Ponto de Partida!'; text = 'Pequenas mudanças diárias podem fazer uma grande diferença!'; resultClass = 'result-improve'; }
         
         resultSummary.innerHTML = `
             <div class="result-icon">${icon}</div>
@@ -168,22 +166,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="result-text">${text}</p>
         `;
         resultSummary.className = `result-summary ${resultClass}`;
-
-        // CHAMA A ANIMAÇÃO DA PONTUAÇÃO
+        
         const scoreValueElement = resultSummary.querySelector('.score-value');
-        animateValue(scoreValueElement, 0, score, 1500); // Anima de 0 a 'score' em 1.5 segundos
+        animateValue(scoreValueElement, 0, score, 1500);
 
-        renderResultChart(catScores, maxCatScores);
+        renderResultChart(catScores);
 
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
         for (const category in catScores) {
             const catScore = catScores[category];
             const maxScore = maxCatScores[category];
             const feedbackText = getCategoryFeedback(category, catScore, maxScore);
-            breakdownHTML += `<li>
-                <strong>${category}:</strong> ${catScore} / ${maxScore} pontos
-                <span>${feedbackText}</span>
-            </li>`;
+            breakdownHTML += `<li><strong>${category}:</strong> ${catScore} / ${maxScore} pontos<span>${feedbackText}</span></li>`;
         }
         breakdownHTML += '</ul>';
         resultBreakdown.innerHTML = breakdownHTML;
@@ -192,31 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderResultChart(catScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
-        const labels = Object.keys(catScores).map(label => label === 'Consumo e Recursos' ? ['Consumo e', 'Recursos'] : label);
-        const userData = Object.values(catScores);
         if(resultChart) resultChart.destroy();
-        resultChart = new Chart(ctx, {
-            type: 'radar',
-            data: { labels: labels, datasets: [{
-                label: 'Sua Pontuação', data: userData,
-                backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)',
-                pointBackgroundColor: 'rgba(0, 255, 153, 1)', pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgba(0, 255, 153, 1)',
-                borderWidth: 2
-            }] },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                scales: { r: {
-                    angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
-                    grid: { color: 'rgba(255, 255, 255, 0.2)' },
-                    pointLabels: { color: '#f5f5f5', font: { size: 13, family: 'Poppins' } },
-                    ticks: { display: false, stepSize: 5 },
-                    min: 0, max: 20
-                }},
-                plugins: { legend: { display: false } },
-                layout: { padding: 5 }
-            }
-        });
+        resultChart = new Chart(ctx, { type: 'radar', data: { labels: Object.keys(catScores).map(l => l === 'Consumo e Recursos' ? ['Consumo e', 'Recursos'] : l), datasets: [{ label: 'Sua Pontuação', data: Object.values(catScores), backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.2)' }, grid: { color: 'rgba(255, 255, 255, 0.2)' }, pointLabels: { color: '#f5f5f5', font: { size: 13 } }, ticks: { display: false, stepSize: 5 }, min: 0, max: 20 }}, plugins: { legend: { display: false } } } });
     }
 
     setupQuiz();
