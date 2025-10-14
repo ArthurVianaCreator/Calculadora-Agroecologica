@@ -1,15 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('eco-form');
     const resultDiv = document.getElementById('result');
-    const resultSummary = document.querySelector('.result-summary');
-    const resultBreakdown = document.querySelector('.result-breakdown');
     const nextBtn = document.getElementById('next-btn');
     const prevBtn = document.getElementById('prev-btn');
     const calculateBtn = document.getElementById('calculate-btn');
     const progressBar = document.getElementById('progress-bar');
     const navButtons = document.querySelector('.nav-buttons');
     
-    let questions;
+    let questions = [];
     let currentQuestionIndex = 0;
     let resultChart = null;
 
@@ -20,33 +18,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function adjustFormHeight() {
+        let maxHeight = 0;
+        const tempQuestions = Array.from(form.querySelectorAll('.question'));
+        tempQuestions.forEach(q => {
+            q.style.position = 'absolute';
+            q.style.visibility = 'hidden';
+            q.style.display = 'block';
+            maxHeight = Math.max(maxHeight, q.offsetHeight);
+            q.style.position = '';
+            q.style.visibility = '';
+            q.style.display = '';
+        });
+        form.style.minHeight = `${maxHeight}px`;
+    }
+
     function setupQuiz() {
-        // MUDANÇA: Em vez de mover os elementos, vamos clonar para a ordem aleatória
-        const originalQuestions = Array.from(form.querySelectorAll('.question'));
-        questions = [...originalQuestions]; // Cria uma cópia para embaralhar
+        questions = Array.from(form.querySelectorAll('.question'));
         shuffleArray(questions);
-        
-        // Exibe a primeira pergunta sem alterar a ordem no DOM
+        adjustFormHeight();
         showQuestion(0);
+        window.addEventListener('resize', adjustFormHeight); // Reajusta a altura se a tela mudar
     }
 
     function showQuestion(index) {
-        const allQuestions = Array.from(form.querySelectorAll('.question'));
-        
-        // Esconde todas as perguntas
-        allQuestions.forEach(q => q.classList.remove('active'));
-        
-        // Mostra a pergunta correta da lista embaralhada
+        questions.forEach(q => q.classList.remove('active'));
         if (questions[index]) {
             questions[index].classList.add('active');
         }
-
         updateProgressBar();
         updateNavButtons();
     }
 
     function updateProgressBar() {
-        const progress = currentQuestionIndex / (questions.length - 1);
+        const progress = questions.length > 1 ? currentQuestionIndex / (questions.length - 1) : 1;
         progressBar.style.width = `${progress * 100}%`;
     }
 
@@ -58,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function isCurrentQuestionAnswered() {
         const currentQ = questions[currentQuestionIndex];
-        return currentQ.querySelector('input:checked') !== null;
+        return currentQ && currentQ.querySelector('input:checked') !== null;
     }
 
     nextBtn.addEventListener('click', () => {
@@ -85,24 +90,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         }
         
-        progressBar.style.width = '100%';
-        
         const categoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         const maxCategoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         let totalScore = 0;
 
-        // Itera sobre a lista de perguntas original para garantir que todas sejam contadas
         Array.from(form.querySelectorAll('.question')).forEach(q => {
             const radioChecked = q.querySelector('input:checked');
-            if (radioChecked) { // Apenas calcula se a pergunta foi respondida
-                const category = q.dataset.category;
+            const category = q.dataset.category;
+            if (radioChecked) {
                 const value = parseInt(radioChecked.value);
                 categoryScores[category] += value;
                 totalScore += value;
             }
-            maxCategoryScores[q.dataset.category] += 5;
+            maxCategoryScores[category] += 5;
         });
-
         displayResult(totalScore, categoryScores, maxCategoryScores);
     });
 
@@ -136,40 +137,30 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             obj.innerHTML = Math.floor(progress * (end - start) + start);
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
+            if (progress < 1) window.requestAnimationFrame(step);
         };
         window.requestAnimationFrame(step);
     }
 
     function displayResult(score, catScores, maxCatScores) {
-        form.style.display = 'none'; // Esconde o form em vez de usar a classe .hidden
+        form.style.display = 'none';
         navButtons.style.display = 'none';
         progressBar.parentElement.classList.add('hidden');
         resultDiv.classList.remove('hidden');
 
+        const resultSummary = document.querySelector('.result-summary');
+        const resultBreakdown = document.querySelector('.result-breakdown');
         let resultClass = '', icon = '', title = '', text = '';
         const maxTotalScore = Object.values(maxCatScores).reduce((a, b) => a + b, 0);
 
-        if (score >= 44) { icon = '🌎'; title = 'Guardião da Terra!'; text = 'Seu desempenho é excelente!'; resultClass = 'result-great';
-        } else if (score >= 32) { icon = '🌱'; title = 'Semente do Bem!'; text = 'Você está no caminho certo! Continue aprimorando seus hábitos!'; resultClass = 'result-good';
-        } else { icon = '🤔'; title = 'Ponto de Partida!'; text = 'Pequenas mudanças diárias podem fazer uma grande diferença!'; resultClass = 'result-improve'; }
+        if (score >= 44) { icon = '🌎'; title = 'Guardião da Terra!'; text = 'Seu desempenho é excelente! Você é um verdadeiro exemplo de consciência agroecológica e sustentabilidade. Parabéns!'; resultClass = 'result-great'; } 
+        else if (score >= 32) { icon = '🌱'; title = 'Semente do Bem!'; text = 'Você está no caminho certo! Suas ações já causam um impacto positivo. Continue aprimorando seus hábitos!'; resultClass = 'result-good'; } 
+        else { icon = '🤔'; title = 'Ponto de Partida!'; text = 'Existem boas oportunidades para melhorar. Pequenas mudanças nos seus hábitos diários podem fazer uma grande diferença!'; resultClass = 'result-improve'; }
         
-        resultSummary.innerHTML = `
-            <div class="result-icon">${icon}</div>
-            <h3 class="result-title">${title}</h3>
-            <div class="result-score">
-                <span>Sua pontuação final</span>
-                <strong class="score-value">0</strong> / ${maxTotalScore}
-            </div>
-            <p class="result-text">${text}</p>
-        `;
+        resultSummary.innerHTML = `<div class="result-icon">${icon}</div><h3 class="result-title">${title}</h3><div class="result-score"><span>Sua pontuação final</span><strong class="score-value">0</strong> / ${maxTotalScore}</div><p class="result-text">${text}</p>`;
         resultSummary.className = `result-summary ${resultClass}`;
         
-        const scoreValueElement = resultSummary.querySelector('.score-value');
-        animateValue(scoreValueElement, 0, score, 1500);
-
+        animateValue(resultSummary.querySelector('.score-value'), 0, score, 1500);
         renderResultChart(catScores);
 
         let breakdownHTML = '<h4>Análise por Categoria</h4><ul>';
@@ -187,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResultChart(catScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
         if(resultChart) resultChart.destroy();
-        resultChart = new Chart(ctx, { type: 'radar', data: { labels: Object.keys(catScores).map(l => l === 'Consumo e Recursos' ? ['Consumo e', 'Recursos'] : l), datasets: [{ label: 'Sua Pontuação', data: Object.values(catScores), backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.2)' }, grid: { color: 'rgba(255, 255, 255, 0.2)' }, pointLabels: { color: '#f5f5f5', font: { size: 13 } }, ticks: { display: false, stepSize: 5 }, min: 0, max: 20 }}, plugins: { legend: { display: false } } } });
+        resultChart = new Chart(ctx, { type: 'radar', data: { labels: Object.keys(catScores).map(l => l === 'Consumo e Recursos' ? ['Consumo', 'Recursos'] : l), datasets: [{ label: 'Sua Pontuação', data: Object.values(catScores), backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)', pointBackgroundColor: 'rgba(0, 255, 153, 1)', pointBorderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.2)' }, grid: { color: 'rgba(255, 255, 255, 0.2)' }, pointLabels: { color: '#f5f5f5', font: { size: 12 } }, ticks: { display: false }, min: 0, max: 20 }}, plugins: { legend: { display: false } } } });
     }
 
     setupQuiz();
