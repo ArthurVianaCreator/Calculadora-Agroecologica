@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Seleção dos elementos do DOM
+    const header = document.querySelector('header'); // [NOVO] Seleciona o cabeçalho
     const form = document.getElementById('eco-form');
     const resultDiv = document.getElementById('result');
     const nextBtn = document.getElementById('next-btn');
@@ -18,40 +20,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function adjustFormHeight() {
-        let maxHeight = 0;
-        const tempQuestions = Array.from(form.querySelectorAll('.question'));
-        tempQuestions.forEach(q => {
-            q.style.position = 'absolute';
-            q.style.visibility = 'hidden';
-            q.style.display = 'block';
-            maxHeight = Math.max(maxHeight, q.offsetHeight);
-            q.style.position = '';
-            q.style.visibility = '';
-            q.style.display = '';
-        });
-        form.style.minHeight = `${maxHeight}px`;
-    }
-
     function setupQuiz() {
         questions = Array.from(form.querySelectorAll('.question'));
         shuffleArray(questions);
-        adjustFormHeight();
+        form.innerHTML = '';
+        questions.forEach(q => form.appendChild(q));
         showQuestion(0);
-        window.addEventListener('resize', adjustFormHeight); // Reajusta a altura se a tela mudar
     }
 
     function showQuestion(index) {
-        questions.forEach(q => q.classList.remove('active'));
-        if (questions[index]) {
-            questions[index].classList.add('active');
-        }
+        questions.forEach((q, i) => {
+            q.classList.toggle('active', i === index);
+        });
+        form.scrollTop = 0;
         updateProgressBar();
         updateNavButtons();
     }
 
     function updateProgressBar() {
-        const progress = questions.length > 1 ? currentQuestionIndex / (questions.length - 1) : 1;
+        const answeredQuestions = currentQuestionIndex;
+        const progress = questions.length > 1 ? answeredQuestions / (questions.length - 1) : 1;
         progressBar.style.width = `${progress * 100}%`;
     }
 
@@ -94,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxCategoryScores = { 'Alimentação': 0, 'Consumo e Recursos': 0, 'Estilo de Vida': 0 };
         let totalScore = 0;
 
-        Array.from(form.querySelectorAll('.question')).forEach(q => {
+        questions.forEach(q => {
             const radioChecked = q.querySelector('input:checked');
             const category = q.dataset.category;
             if (radioChecked) {
@@ -111,19 +99,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const percentage = (score / maxScore) * 100;
         const feedback = {
             'Alimentação': {
-                high: 'Excelente! Suas escolhas alimentares são conscientes e apoiam um ciclo sustentável.',
-                mid: 'Bom caminho! Que tal visitar uma feira local para descobrir novos sabores e apoiar pequenos produtores?',
-                low: 'Pequenas trocas, como preferir alimentos da estação, podem ter um grande impacto na sua saúde e no ambiente.'
+                high: '🏆 Excelente! Suas escolhas alimentares são conscientes e apoiam um ciclo sustentável.',
+                mid: '👍 Bom caminho! Que tal visitar uma feira local para descobrir novos sabores e apoiar pequenos produtores?',
+                low: '💡 Pequenas trocas, como preferir alimentos da estação, podem ter um grande impacto na sua saúde e no ambiente.'
             },
             'Consumo e Recursos': {
-                high: 'Parabéns! Você demonstra um ótimo domínio sobre o uso consciente dos recursos naturais.',
-                mid: 'Você está atento! Lembre-se que reduzir o consumo é tão importante quanto reutilizar e reciclar.',
-                low: 'Comece com pequenas ações, como apagar as luzes. Cada gesto consciente ajuda a preservar nossos recursos.'
+                high: '🌟 Parabéns! Você demonstra um ótimo domínio sobre o uso consciente dos recursos naturais.',
+                mid: '👀 Você está atento! Lembre-se que reduzir o consumo é tão importante quanto reutilizar e reciclar.',
+                low: '💧 Comece com pequenas ações, como apagar as luzes. Cada gesto consciente ajuda a preservar nossos recursos.'
             },
             'Estilo de Vida': {
-                high: 'Seu estilo de vida é um exemplo de harmonia com o meio ambiente. Continue assim!',
-                mid: 'Suas práticas são positivas. Considere incorporar mais um hábito sustentável na sua rotina, como a compostagem.',
-                low: 'Que tal começar um novo hábito? Separar o lixo reciclável é um ótimo primeiro passo para um grande impacto.'
+                high: '💚 Seu estilo de vida é um exemplo de harmonia com o meio ambiente. Continue assim!',
+                mid: '🚲 Suas práticas são positivas. Considere incorporar mais um hábito sustentável na sua rotina, como a compostagem.',
+                low: '🤔 Que tal começar um novo hábito? Separar o lixo reciclável é um ótimo primeiro passo para um grande impacto.'
             }
         };
         if (percentage >= 80) return feedback[category].high;
@@ -143,10 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResult(score, catScores, maxCatScores) {
+        // [CORREÇÃO] Esconde os elementos do quiz, incluindo o cabeçalho
+        header.style.display = 'none';
         form.style.display = 'none';
         navButtons.style.display = 'none';
         progressBar.parentElement.classList.add('hidden');
         resultDiv.classList.remove('hidden');
+        resultDiv.scrollTop = 0; // Garante que a tela de resultado comece no topo
 
         const resultSummary = document.querySelector('.result-summary');
         const resultBreakdown = document.querySelector('.result-breakdown');
@@ -178,8 +169,42 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResultChart(catScores) {
         const ctx = document.getElementById('resultChart').getContext('2d');
         if(resultChart) resultChart.destroy();
-        resultChart = new Chart(ctx, { type: 'radar', data: { labels: Object.keys(catScores).map(l => l === 'Consumo e Recursos' ? ['Consumo', 'Recursos'] : l), datasets: [{ label: 'Sua Pontuação', data: Object.values(catScores), backgroundColor: 'rgba(0, 255, 153, 0.2)', borderColor: 'rgba(0, 255, 153, 1)', pointBackgroundColor: 'rgba(0, 255, 153, 1)', pointBorderColor: '#fff', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { color: 'rgba(255, 255, 255, 0.2)' }, grid: { color: 'rgba(255, 255, 255, 0.2)' }, pointLabels: { color: '#f5f5f5', font: { size: 12 } }, ticks: { display: false }, min: 0, max: 20 }}, plugins: { legend: { display: false } } } });
+        resultChart = new Chart(ctx, { 
+            type: 'radar', 
+            data: { 
+                labels: Object.keys(catScores).map(l => l === 'Consumo e Recursos' ? ['Consumo', '& Recursos'] : l), 
+                datasets: [{ 
+                    label: 'Sua Pontuação', 
+                    data: Object.values(catScores), 
+                    backgroundColor: 'rgba(0, 255, 153, 0.2)', 
+                    borderColor: 'rgba(0, 255, 153, 1)', 
+                    pointBackgroundColor: 'rgba(0, 255, 153, 1)', 
+                    pointBorderColor: '#fff', 
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(0, 255, 153, 1)',
+                    borderWidth: 2 
+                }] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                scales: { 
+                    r: { 
+                        angleLines: { color: 'rgba(255, 255, 255, 0.2)' }, 
+                        grid: { color: 'rgba(255, 255, 255, 0.2)' }, 
+                        pointLabels: { color: '#f5f5f5', font: { size: 13 } }, 
+                        ticks: { display: false, backdropColor: 'transparent' }, 
+                        min: 0, 
+                        max: 20 
+                    }
+                }, 
+                plugins: { 
+                    legend: { display: false } 
+                } 
+            } 
+        });
     }
 
+    // Inicia o quiz
     setupQuiz();
 });
