@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Seleção dos elementos do DOM
-    const header = document.querySelector('header'); // [NOVO] Seleciona o cabeçalho
+    const header = document.querySelector('header');
     const form = document.getElementById('eco-form');
     const resultDiv = document.getElementById('result');
     const nextBtn = document.getElementById('next-btn');
@@ -12,6 +12,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let questions = [];
     let currentQuestionIndex = 0;
     let resultChart = null;
+
+    // CORREÇÃO: Lógica para adicionar/remover classe de item selecionado
+    form.addEventListener('click', (e) => {
+        if (e.target.type === 'radio') {
+            const currentQuestion = e.target.closest('.question');
+            if (currentQuestion) {
+                // Remove a classe de todas as labels na pergunta atual
+                currentQuestion.querySelectorAll('label').forEach(label => {
+                    label.classList.remove('option-selected');
+                });
+                // Adiciona a classe apenas na label do input selecionado
+                e.target.parentElement.classList.add('option-selected');
+            }
+        }
+    });
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -131,13 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function displayResult(score, catScores, maxCatScores) {
-        // [CORREÇÃO] Esconde os elementos do quiz, incluindo o cabeçalho
         header.style.display = 'none';
         form.style.display = 'none';
         navButtons.style.display = 'none';
         progressBar.parentElement.classList.add('hidden');
         resultDiv.classList.remove('hidden');
-        resultDiv.scrollTop = 0; // Garante que a tela de resultado comece no topo
+        resultDiv.scrollTop = 0;
 
         const resultSummary = document.querySelector('.result-summary');
         const resultBreakdown = document.querySelector('.result-breakdown');
